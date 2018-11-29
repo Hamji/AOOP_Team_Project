@@ -1,8 +1,14 @@
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.EtchedBorder;
 
 public class MainFrame extends JFrame {
 	
@@ -15,6 +21,9 @@ public class MainFrame extends JFrame {
 	JMenuItem manageMenuList[];
 	JMenuItem resultMenuList[];
 	
+	JPanel insertInfo;
+	JScrollPane infoList;
+	
 	public MainFrame() {
 		///////////메인 프레임 설정들//////////// 
 		
@@ -22,29 +31,38 @@ public class MainFrame extends JFrame {
 		
 		// 크기 1600 900
 		this.setSize(1600, 900);
-		
+		// Layout : BorderLayout
+		this.setLayout(new BorderLayout());
 		// MainFrame resize 설정 불가능 하도록
 		this.setResizable(false);
-		
+		// MainFrame 의 배경색은 Gray
+		this.setBackground(Color.GRAY);
 		////////////////////////////////
 		
 		
 		/////////////메뉴 바 설정////////////////
 		JMenuBar mainBar = new JMenuBar();
 		mainBar.setSize(1600, 30);
+		mainBar.setBorder(new EtchedBorder());
 		
 		this.SetMenuList();
 		
 		mainBar.add(fileMenu);
 		mainBar.add(manageMenu);
 		mainBar.add(resultMenu);
+		/////////////////////////////////////
 		
+		// 메인바 추가
+		this.add(mainBar,BorderLayout.NORTH);
 		
-		this.add(mainBar);
-		this.add(new JPanel());
-	
+		// 패널 설치
+		insertInfo = new InsertInfo();
+		infoList = new InfoList();
+		
+		this.add(insertInfo,BorderLayout.EAST);
+		this.add(infoList,BorderLayout.WEST);
+		
 		////////////////////
-		
 		
 		//X 창 종료
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
