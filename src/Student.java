@@ -1,25 +1,35 @@
 
 public class Student {
+	
+	String name;
+	
+	String major;
+	
+	String number;
+	
+	String gender;
+	
+	
 	// 출석
 	int attendance[];
 	
 	// 중간고사
-	double midtermExamScore;
+	int midtermExamScore;
 	
 	// 기말고사
-	double finalExamScore;
+	int finalExamScore;
 	
 	// 기타점수
-	double etcScore;
+	int etcScore;
 	
 	// 퀴즈점수
-	double quizScore;
+	int quizScore;
 	
 	// 발표점수
-	double announcementScore;
+	int announcementScore;
 	
 	// 보고서 점수
-	double reportScore;
+	int reportScore;
 	
 	// 아무런 매개변수 없을시
 	public Student() {
@@ -34,8 +44,26 @@ public class Student {
 		this.setAnnouncementScore(0);
 		this.setReportScore(0);
 	}
-
-	public Student(int[] attendance, double midtermExamScore, double finalExamScore, double etcScore, double quizScore, double announcementScore, double reportScore) {
+	
+	public Student(String name, String major, String number, String gender) {
+		this.name = name;
+		this.major = major;
+		this.number = number;
+		this.gender = gender;
+		
+		this.attendance = new int[16];
+		for(int i = 0; i < attendance.length;i++)
+			attendance[i] = -1;
+			
+		this.setMidtermExamScore(0);
+		this.setFinalExamScore(0);
+		this.setEtcScore(0);
+		this.setQuizScore(0);
+		this.setAnnouncementScore(0);
+		this.setReportScore(0);
+	}
+	
+	public void SetScore(int[] attendance, int midtermExamScore, int finalExamScore, int etcScore, int quizScore, int announcementScore, int reportScore) {
 		this.setAttendance(attendance);
 		this.setMidtermExamScore(midtermExamScore);
 		this.setFinalExamScore(finalExamScore);
@@ -45,31 +73,63 @@ public class Student {
 		this.setReportScore(reportScore);
 	}
 	
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setMajor(String major) {
+		this.major = major;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getMajor() {
+		return major;
+	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
 	public void setAttendance(int[] attendance) {
 		this.attendance = attendance;
 	}
 
-	public void setMidtermExamScore(double midtermExamScore) {
+	public void setMidtermExamScore(int midtermExamScore) {
 		this.midtermExamScore = midtermExamScore;
 	}
 
-	public void setFinalExamScore(double finalExamScore) {
+	public void setFinalExamScore(int finalExamScore) {
 		this.finalExamScore = finalExamScore;
 	}
 
-	public void setEtcScore(double etcScore) {
+	public void setEtcScore(int etcScore) {
 		this.etcScore = etcScore;
 	}
 
-	public void setQuizScore(double quizScore) {
+	public void setQuizScore(int quizScore) {
 		this.quizScore = quizScore;
 	}
 
-	public void setAnnouncementScore(double announcementScore) {
+	public void setAnnouncementScore(int announcementScore) {
 		this.announcementScore = announcementScore;
 	}
 
-	public void setReportScore(double reportScore) {
+	public void setReportScore(int reportScore) {
 		this.reportScore = reportScore;
 	}
 
@@ -77,27 +137,27 @@ public class Student {
 		return attendance;
 	}
 
-	public double getMidtermExamScore() {
+	public int getMidtermExamScore() {
 		return midtermExamScore;
 	}
 
-	public double getFinalExamScore() {
+	public int getFinalExamScore() {
 		return finalExamScore;
 	}
 
-	public double getEtcScore() {
+	public int getEtcScore() {
 		return etcScore;
 	}
 
-	public double getQuizScore() {
+	public int getQuizScore() {
 		return quizScore;
 	}
 
-	public double getAnnouncementScore() {
+	public int getAnnouncementScore() {
 		return announcementScore;
 	}
 
-	public double getReportScore() {
+	public int getReportScore() {
 		return reportScore;
 	}
 	
