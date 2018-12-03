@@ -30,8 +30,9 @@ public class MainFrame extends BaseFrame{
 	
 	FileMenuActionListener fileListen;
 	ManageMenuActionListener manageListen;
+	ResultMenuActionListener resultListen;
 	
-	ProgramManager manage = new ProgramManager();
+	ProgramManager manage;
 	
 	public MainFrame() {
 		///////////메인 프레임 설정들//////////// 
@@ -64,6 +65,8 @@ public class MainFrame extends BaseFrame{
 		// 메인바 추가
 		this.add(mainBar,BorderLayout.NORTH);
 		
+		manage = new ProgramManager();
+		
 		// 패널 설치
 		insertInfo = new InsertInfo();
 		insertInfo.mainFrame = this;
@@ -76,6 +79,7 @@ public class MainFrame extends BaseFrame{
 		this.add(insertInfo,BorderLayout.EAST);
 		this.add(infoList,BorderLayout.WEST);
 		////////////////////
+
 		
 		manage.setInfoList(infoList);
 		manage.setInsertInfo(insertInfo);
@@ -126,12 +130,16 @@ public class MainFrame extends BaseFrame{
 		// 결과 메뉴
 		resultMenu = new JMenu("결과");
 		resultMenuList = new JMenuItem[2];
+		resultListen = new ResultMenuActionListener();
 		
 		resultMenuList[0] = new JMenuItem("결과 보기");
 		resultMenuList[1] = new JMenuItem("그래프 보기");
 		
 		for(int i = 0; i < resultMenuList.length;i++)
 			resultMenu.add(resultMenuList[i]);
+		
+		resultMenuList[0].addActionListener(resultListen);
+		resultMenuList[1].addActionListener(resultListen);
 	}
 	
 
@@ -209,23 +217,43 @@ public class MainFrame extends BaseFrame{
 			// TODO Auto-generated method stub
 			if(e.getSource() == manageMenuList[0]) {
 				System.out.println("출석 일괄처리");
-				BaseFrame temp = new BatchProcessFrame();
-				temp.mainFrame = MainFrame.this;
+				BaseFrame temp = new BatchProcessFrame(MainFrame.this);
+
 				MainFrame.this.setEnabled(false);
 				
 			}else if(e.getSource() == manageMenuList[1]) {
 				System.out.println("성적 반영비율 설정");
 				ScoreRatioFrame temp = new ScoreRatioFrame();
 				temp.mainFrame = MainFrame.this;
+				temp.manage = manage;
 				MainFrame.this.setEnabled(false);
 				
 			}else if(e.getSource() == manageMenuList[2]) {
 				System.out.println("등급 비율 설정");
 				GradeRatioFrame temp = new GradeRatioFrame();
 				temp.mainFrame = MainFrame.this;
+				temp.manage = manage;
 				MainFrame.this.setEnabled(false);
 				
 			}
 		}
+	}
+
+	class ResultMenuActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(e.getSource() == resultMenuList[0]) {
+				// 결과 보기 
+			}else if(e.getSource() == resultMenuList[1]) {
+				// 그래프 그리기
+				manage.CalculateTotalScore();
+				GraphFrame temp = new GraphFrame();
+				temp.manage = manage;
+				temp.mainFrame = MainFrame.this;
+				MainFrame.this.setEnabled(false);
+			}
+			
+		}
+		
 	}
 }

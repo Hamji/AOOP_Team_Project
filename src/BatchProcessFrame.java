@@ -23,7 +23,7 @@ public class BatchProcessFrame extends BaseFrame {
 	JComboBox<String> cb2 = new JComboBox(attend);
 	JTextField text = new JTextField(20);
 	
-	public BatchProcessFrame(){
+	public BatchProcessFrame(MainFrame main){
 		this.setTitle("Ãâ¼® ÀÏ°ý Ã³¸®");
 		this.setBounds(100, 100, 600, 110);
 		this.setResizable(false);
@@ -38,6 +38,8 @@ public class BatchProcessFrame extends BaseFrame {
 
 		panel.setBackground(Color.WHITE);
 		
+		this.mainFrame = main;
+		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setVisible(true);
 		
@@ -49,6 +51,9 @@ public class BatchProcessFrame extends BaseFrame {
 	class ClosingEventHandler extends WindowAdapter{
 		public void windowClosing(WindowEvent e) {
 			System.out.println("´ÝÈû");
+			
+			mainFrame.manage.ApplyBatchProcess(cb1.getSelectedIndex(), cb2.getSelectedIndex());
+			
 			BatchProcessFrame.this.mainFrame.setEnabled(true);
 		}
 	}

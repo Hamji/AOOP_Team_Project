@@ -29,10 +29,13 @@ public class CheckOutEditFrame extends BaseFrame {
 			for(int i = 0; i < 16; i++)
 				checkoutList[i] = new JComboBox(idle);
 			
+			
+			
 			for(int i = 1; i <= 16; i++)
 				this.add(new JLabel(String.valueOf(i)));
 			for(int i = 0; i < 16; i++)
 				this.add(checkoutList[i]);
+			
 			
 			
 		}
@@ -44,7 +47,7 @@ public class CheckOutEditFrame extends BaseFrame {
 		this.setVisible(true);
 		this.setBackground(Color.GRAY);
 		this.setBounds(200, 200, 1500, 100);
-		this.addWindowListener(new ClosingEventHandler());
+		this.addWindowListener(new EventHandler());
 		this.mainFrame = mainFrame;
 		this.manage = mainFrame.manage;
 		
@@ -54,7 +57,26 @@ public class CheckOutEditFrame extends BaseFrame {
 		
 		this.add(mainPanel);
 	}
-	class ClosingEventHandler extends WindowAdapter{
+	class EventHandler extends WindowAdapter{
+		@Override
+		public void windowOpened(WindowEvent e) {
+			//System.out.println("창열림");
+			System.out.println(manage.stList.size());
+			for(int i = 0; i < manage.stList.size(); i++)
+			{
+				if(manage.stList.get(i).info.number.equals(manage.insertInfo.getNumberText().getText())) {
+					//System.out.println("심상치 않은데?");
+					for(int j = 0; j < 16; j++) {
+						checkoutList[j].setSelectedIndex(manage.stList.get(i).info.attendance[j]);
+						checkoutList[j].validate();
+						//System.out.print(manage.stList.get(i).info.attendance[j] + " ");
+					}
+					//System.out.println("");
+					return;
+				}	
+			}
+		}
+
 		public void windowClosing(WindowEvent e) {
 			System.out.println("닫힘");
 			CheckOutEditFrame.this.mainFrame.setEnabled(true);
@@ -66,7 +88,9 @@ public class CheckOutEditFrame extends BaseFrame {
 				temp[i] = CheckOutEditFrame.this.checkoutList[i].getSelectedIndex();
 			}
 			
-			CheckOutEditFrame.this.manage.insertInfo.setCheckout(temp);
+			manage.insertInfo.setCheckout(temp);
+			//for(int i = 0; i < 16; i++)
+				//System.out.println(temp[i]);
 		}
 	}
 }

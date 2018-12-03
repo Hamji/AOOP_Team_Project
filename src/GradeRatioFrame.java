@@ -2,12 +2,15 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -62,6 +65,8 @@ public class GradeRatioFrame extends BaseFrame {
 		this.getContentPane().setBackground(new Color(67, 117, 219));
 		setLocation(400, 400);
 		
+		button.addActionListener(new GradeActionListener());
+		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setSize(670,150);
 		setResizable(false);
@@ -72,12 +77,33 @@ public class GradeRatioFrame extends BaseFrame {
 		add(panel,BorderLayout.CENTER);
 		add(panel2,BorderLayout.SOUTH);
 	}
-	class ClosingEventHandler extends WindowAdapter{
-		public void windowClosing(WindowEvent e) {
-			System.out.println("´ÝÈû");
-			GradeRatioFrame.this.mainFrame.setEnabled(true);
+	
+	class GradeActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			System.out.println("¤·");
+			
+			if( manage.EditGradeRatio(aPText.getText(),
+					aZText.getText(),
+					bPText.getText(),
+					bZText.getText(),
+					cPText.getText(),
+					cZText.getText(),
+					dZText.getText(),
+					fText.getText())) {
+				
+				GradeRatioFrame.this.mainFrame.setEnabled(true);
+				dispose();
+			}
+	
 		}
 	}
 	
-	
+	class ClosingEventHandler extends WindowAdapter{
+		public void windowClosing(WindowEvent e) {
+			//System.out.println("´ÝÈû");
+			GradeRatioFrame.this.mainFrame.setEnabled(true);
+		}
+	}
 }

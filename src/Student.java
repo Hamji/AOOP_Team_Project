@@ -11,7 +11,7 @@ public class Student {
 	
 	
 	// 출석
-	int attendance[];
+	int attendance[] = new int[16];
 	
 	// 중간고사
 	int midtermExamScore;
@@ -31,11 +31,14 @@ public class Student {
 	// 보고서 점수
 	int reportScore;
 	
+	// 총점
+	int totalScore;
+	
+	
+
 	// 아무런 매개변수 없을시
 	public Student() {
 		this.attendance = new int[16];
-		for(int i = 0; i < attendance.length;i++)
-			attendance[i] = -1;
 			
 		this.setMidtermExamScore(0);
 		this.setFinalExamScore(0);
@@ -51,9 +54,6 @@ public class Student {
 		this.number = number;
 		this.gender = gender;
 		
-		this.attendance = new int[16];
-		for(int i = 0; i < attendance.length;i++)
-			attendance[i] = -1;
 			
 		this.setMidtermExamScore(0);
 		this.setFinalExamScore(0);
@@ -73,6 +73,13 @@ public class Student {
 		this.setReportScore(reportScore);
 	}
 	
+	public int getTotalScore() {
+		return totalScore;
+	}
+
+	public void setTotalScore(int totalScore) {
+		this.totalScore = totalScore;
+	}
 	public void setName(String name) {
 		this.name = name;
 	}

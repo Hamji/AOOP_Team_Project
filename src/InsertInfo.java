@@ -379,6 +379,7 @@ public class InsertInfo extends BasePanel {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			// TODO Auto-generated method stub
+			
 			if(arg0.getSource() == addButton) {
 				System.out.println("추가");
 				
@@ -404,8 +405,9 @@ public class InsertInfo extends BasePanel {
 				
 			}else if(arg0.getSource() == attendanceEdit) {
 				System.out.println("출석수정");
-				new CheckOutEditFrame(mainFrame);
+				CheckOutEditFrame temp = new CheckOutEditFrame(mainFrame);
 				mainFrame.setEnabled(false);
+				
 			}
 		}	
 	}

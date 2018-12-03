@@ -1,6 +1,8 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -67,8 +69,29 @@ public class ScoreRatioFrame extends BaseFrame {
 		add(panel2,BorderLayout.SOUTH);
 		
 		this.addWindowListener(new ClosingEventHandler());
+		this.OkButton.addActionListener(new ScoreActionListener());
 	}
 	
+	class ScoreActionListener implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			System.out.println("¤·");
+			if( manage.EditScoreRatio(attendance.getText(),
+					midterm.getText(), 
+					finals.getText(), 
+					quiz.getText(), 
+					announcement.getText(), 
+					report.getText(), 
+					etc.getText() ))
+					{
+						ScoreRatioFrame.this.mainFrame.setEnabled(true);
+						dispose();
+					}
+						
+		}
+	}
+
 	class ClosingEventHandler extends WindowAdapter{
 		public void windowClosing(WindowEvent e) {
 			System.out.println("´ÝÈû");
