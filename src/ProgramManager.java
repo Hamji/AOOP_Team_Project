@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,11 +84,11 @@ public class ProgramManager {
 			start = index + 2;
 			
 			index = contents.indexOf(", ", start);
-			major = contents.substring(start,  index);
+			number = contents.substring(start,  index);
 			start = index + 2;
 			
 			index = contents.indexOf(", ", start);
-			number = contents.substring(start,  index);
+			major = contents.substring(start,  index);
 			start = index + 2;
 			
 			index = contents.indexOf(", ", start);
@@ -139,6 +140,9 @@ public class ProgramManager {
 			stTemp.grade = contents.substring(start,  index);
 			start = index + 2;
 			//System.out.println(stTemp.toString());
+
+			stTemp.manage = this;
+			//stTemp.SettingGradeComboBox();
 			
 			StudentPanel tempStudentPanel = new StudentPanel(stTemp);
 			tempStudentPanel.manage = this;
@@ -184,16 +188,24 @@ public class ProgramManager {
 			stTemp.manage = this;
 			//System.out.println(stTemp.toString());
 			
+			
 			StudentPanel tempStudentPanel = new StudentPanel(stTemp);
 			tempStudentPanel.manage = this;
+			
+			
 			
 			infoList.addStudentPanel(tempStudentPanel);
 			this.stList.add(tempStudentPanel);
 			
 			
+			
 			//System.out.print("name: " + rs.getString(1) + ", ");
 			//System.out.println("number: " + rs.getString("number"));
 		}
+		Collections.sort(stList);
+		
+		for(int i = 0; i < stList.size();i++)
+			stList.get(i).info.SettingGradeComboBox();
 		
 		temp.con.close();
 		temp.stmt.close();
@@ -850,7 +862,11 @@ public class ProgramManager {
 	}
 	
 	public void SetResultPanel(JPanel pane) {
+		
+		Collections.sort(stList);
+		
 		for(int i = 0; i < stList.size(); i++) {
+			stList.get(i).info.SettingGradeComboBox();
 			pane.add(new ResultPanel(stList.get(i).info));
 		}
 		pane.setPreferredSize(new Dimension(560, 60 * stList.size()));

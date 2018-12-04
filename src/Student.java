@@ -43,12 +43,23 @@ public class Student {
 	int totalScore;
 	
 	// 성적
-	String grade = "미정";
+	String grade = "";
 	
 	String[] gradeData = { "선택", "A+", "A0", "B+", "B0", "C+", "C0", "D", "F"};
 	
 	JComboBox gradeCombo = new JComboBox(gradeData);
 	int selectedGrade = 0;
+	
+	public void SettingGradeComboBox() {
+		int i = 0;
+		
+		for(i = 1; i < gradeData.length; i++)
+			if(grade.equals(gradeData[i])) {
+				gradeCombo.setSelectedIndex(i);
+				return;
+			}
+		
+	}
 	
 	public String CheckoutToString() {
 		String result = "";
@@ -82,6 +93,8 @@ public class Student {
 			}
 		}
 	}
+	
+
 	
 	public String toString() {
 		String result = "";
