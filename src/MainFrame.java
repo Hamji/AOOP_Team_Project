@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -95,11 +97,13 @@ public class MainFrame extends BaseFrame{
 	void SetMenuList() {
 		// 파일메뉴
 		fileMenu = new JMenu("파일");
-		fileMenuList = new JMenuItem[3];
+		fileMenuList = new JMenuItem[5];
 		
 		fileMenuList[0] = new JMenuItem("새로 만들기");
 		fileMenuList[1] = new JMenuItem("열기");
 		fileMenuList[2] = new JMenuItem("저장");
+		fileMenuList[3] = new JMenuItem("mysql 열기");
+		fileMenuList[4] = new JMenuItem("mysql 저장");
 		
 		fileListen = new FileMenuActionListener();
 		manageListen = new ManageMenuActionListener();
@@ -111,6 +115,8 @@ public class MainFrame extends BaseFrame{
 		fileMenuList[0].addActionListener(fileListen);
 		fileMenuList[1].addActionListener(fileListen);
 		fileMenuList[2].addActionListener(fileListen);
+		fileMenuList[3].addActionListener(fileListen);
+		fileMenuList[4].addActionListener(fileListen);
 		
 		// 관리 메뉴
 		manageMenu = new JMenu("관리");
@@ -198,14 +204,41 @@ public class MainFrame extends BaseFrame{
 			// TODO Auto-generated method stub
 			if(e.getSource() == fileMenuList[0]) {
 				// 새로만들기
-				System.out.print("새로 만들기");
+				//System.out.print("새로 만들기");
 				new MainFrame();
 				MainFrame.this.dispose();
 			}else if(e.getSource() == fileMenuList[1]) {
 				// 열기
-				
+				try {
+					MainFrame temp = new MainFrame();
+					MainFrame.this.dispose();
+					temp.manage.OpenFile();
+					
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}else if(e.getSource() == fileMenuList[2]) {
 				// 저장
+				manage.SaveFile();
+			}else if(e.getSource() == fileMenuList[3]) {
+				// mysql 불러오기 
+				try {
+					MainFrame temp = new MainFrame();
+					MainFrame.this.dispose();
+					temp.manage.OpenBySql();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}else if(e.getSource() == fileMenuList[4]) {
+				// mysql 저장
+				try {
+					manage.SaveBySql();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		}
 	}
@@ -216,20 +249,20 @@ public class MainFrame extends BaseFrame{
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 			if(e.getSource() == manageMenuList[0]) {
-				System.out.println("출석 일괄처리");
+				//System.out.println("출석 일괄처리");
 				BaseFrame temp = new BatchProcessFrame(MainFrame.this);
 
 				MainFrame.this.setEnabled(false);
 				
 			}else if(e.getSource() == manageMenuList[1]) {
-				System.out.println("성적 반영비율 설정");
+				//System.out.println("성적 반영비율 설정");
 				ScoreRatioFrame temp = new ScoreRatioFrame();
 				temp.mainFrame = MainFrame.this;
 				temp.manage = manage;
 				MainFrame.this.setEnabled(false);
 				
 			}else if(e.getSource() == manageMenuList[2]) {
-				System.out.println("등급 비율 설정");
+				//System.out.println("등급 비율 설정");
 				GradeRatioFrame temp = new GradeRatioFrame();
 				temp.mainFrame = MainFrame.this;
 				temp.manage = manage;
@@ -244,6 +277,9 @@ public class MainFrame extends BaseFrame{
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource() == resultMenuList[0]) {
 				// 결과 보기 
+				manage.CalculateTotalScore();
+				ResultFrame temp = new ResultFrame(MainFrame.this);
+				MainFrame.this.setEnabled(false);
 			}else if(e.getSource() == resultMenuList[1]) {
 				// 그래프 그리기
 				manage.CalculateTotalScore();

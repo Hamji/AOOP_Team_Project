@@ -98,19 +98,19 @@ public class GraphFrame extends BaseFrame {
 				manage.DrawGraph(graphPanel,2);
 			}else if(e.getSource() == finalButton) {
 				graphName.setText(finalButton.getText() + " (20점 단위)");
-				manage.DrawGraph(graphPanel,2);
+				manage.DrawGraph(graphPanel,3);
 			}else if(e.getSource() == quizButton) {
 				graphName.setText(quizButton.getText() + " (20점 단위)");
-				manage.DrawGraph(graphPanel,2);
+				manage.DrawGraph(graphPanel,4);
 			}else if(e.getSource() == reportButton) {
 				graphName.setText(reportButton.getText() + " (20점 단위)");
-				manage.DrawGraph(graphPanel,2);
+				manage.DrawGraph(graphPanel,5);
 			}else if(e.getSource() == attendanceButton) {
 				graphName.setText(attendanceButton.getText() + " (20점 단위)");
-				manage.DrawGraph(graphPanel,2);
+				manage.DrawGraph(graphPanel,6);
 			}else if(e.getSource() == etcButton) {
 				graphName.setText(etcButton.getText() + " (20점 단위)");
-				manage.DrawGraph(graphPanel,2);
+				manage.DrawGraph(graphPanel,7);
 			}
 			
 			

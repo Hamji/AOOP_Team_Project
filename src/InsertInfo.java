@@ -381,7 +381,7 @@ public class InsertInfo extends BasePanel {
 			// TODO Auto-generated method stub
 			
 			if(arg0.getSource() == addButton) {
-				System.out.println("추가");
+				//System.out.println("추가");
 				
 				if( !InsertInfo.this.manage.IsInsertRight()) {
 					JOptionPane.showMessageDialog(null, "잘못된 입력", "오류", JOptionPane.WARNING_MESSAGE);
@@ -393,18 +393,18 @@ public class InsertInfo extends BasePanel {
 					manage.InsertStudent();
 				}
 			}else if(arg0.getSource() == editButton) {
-				System.out.println("수정");
+				//System.out.println("수정");
 				if( InsertInfo.this.manage.IsInsertRight())
 					manage.AdjustStudent();
 				else 
 					JOptionPane.showMessageDialog(null, "잘못된 입력", "오류", JOptionPane.WARNING_MESSAGE);
 				
 			}else if(arg0.getSource() == delButton) {
-				System.out.println("제거");
+				//System.out.println("제거");
 				manage.DelStudent();
 				
 			}else if(arg0.getSource() == attendanceEdit) {
-				System.out.println("출석수정");
+				//System.out.println("출석수정");
 				CheckOutEditFrame temp = new CheckOutEditFrame(mainFrame);
 				mainFrame.setEnabled(false);
 				

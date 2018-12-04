@@ -7,7 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-public class StudentPanel extends BasePanel {
+public class StudentPanel extends BasePanel implements Comparable<StudentPanel> {
 	Student info;
 	
 	JButton studentButton;
@@ -55,5 +55,17 @@ public class StudentPanel extends BasePanel {
 			StudentPanel.this.manage.CallInsertInfo(StudentPanel.this);
 		}
 		
+	}
+
+	@Override
+	public int compareTo(StudentPanel s) {
+		// TODO Auto-generated method stub
+		
+		if( this.info.totalScore > s.info.totalScore)
+			return -1;
+		else if( this.info.totalScore < s.info.totalScore)
+			return 1;
+		else
+			return 0;
 	}
 }

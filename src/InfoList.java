@@ -59,7 +59,7 @@ public class InfoList extends BasePanel {
 		
 		if(manyPanel > 15)
 		{
-			extraHeight+= 60;
+			extraHeight+= 68;
 			listPane.setPreferredSize(new Dimension(1040,700 + (int)extraHeight));
 		}
 		

@@ -1,3 +1,10 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 
 public class Student {
 	
@@ -9,6 +16,7 @@ public class Student {
 	
 	String gender;
 	
+	ProgramManager manage;
 	
 	// 출석
 	int attendance[] = new int[16];
@@ -34,8 +42,67 @@ public class Student {
 	// 총점
 	int totalScore;
 	
+	// 성적
+	String grade = "미정";
 	
-
+	String[] gradeData = { "선택", "A+", "A0", "B+", "B0", "C+", "C0", "D", "F"};
+	
+	JComboBox gradeCombo = new JComboBox(gradeData);
+	int selectedGrade = 0;
+	
+	public String CheckoutToString() {
+		String result = "";
+		
+		for(int i = 0; i < 16; i++)
+			if(this.attendance[i] == 1) {
+				result += 'a';
+			}else if(this.attendance[i] == 2) {
+				result += 'b';
+			}else if(this.attendance[i] == 3) {
+				result += 'c';
+			}
+		
+		return result;
+	}
+	
+	class GradeItemListener implements ItemListener{
+		public void itemStateChanged(ItemEvent e) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+		          //System.out.println(gradeCombo.getSelectedIndex());
+			     int temp = selectedGrade;
+			     selectedGrade = gradeCombo.getSelectedIndex();
+			     
+			     if(! manage.IsValidGrade(selectedGrade)) {
+			    	 JOptionPane.showMessageDialog(null, "잘못된 입력", "오류", JOptionPane.WARNING_MESSAGE);
+			    	 selectedGrade = temp;
+			    	 gradeCombo.setSelectedIndex(temp);
+			    	 return;
+			     }
+			     grade = gradeData[gradeCombo.getSelectedIndex()];
+			}
+		}
+	}
+	
+	public String toString() {
+		String result = "";
+		result += this.name + ", ";
+		result += this.major + ", ";
+		result += this.number + ", ";
+		result += this.gender + ", ";
+		
+		result += this.midtermExamScore + ", ";
+		result += this.finalExamScore + ", ";
+		result += this.quizScore + ", ";
+		result += this.reportScore + ", ";
+		result += this.announcementScore + ", ";
+		result += this.etcScore + ", ";
+		
+		result += this.grade;
+		
+		
+		return result;
+	}
+	
 	// 아무런 매개변수 없을시
 	public Student() {
 		this.attendance = new int[16];
@@ -46,6 +113,8 @@ public class Student {
 		this.setQuizScore(0);
 		this.setAnnouncementScore(0);
 		this.setReportScore(0);
+		
+		this.gradeCombo.addItemListener(new GradeItemListener());
 	}
 	
 	public Student(String name, String major, String number, String gender) {
@@ -54,7 +123,7 @@ public class Student {
 		this.number = number;
 		this.gender = gender;
 		
-			
+		this.gradeCombo.addItemListener(new GradeItemListener());
 		this.setMidtermExamScore(0);
 		this.setFinalExamScore(0);
 		this.setEtcScore(0);

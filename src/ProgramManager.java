@@ -4,9 +4,27 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class ProgramManager {
 	MainFrame main;
@@ -15,9 +33,266 @@ public class ProgramManager {
 	
 	ArrayList<StudentPanel> stList = new ArrayList<StudentPanel>();
 	
+	public void SaveFile() {
+		JFileChooser jfc = new JFileChooser();
+		
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "text");
+		jfc.setFileFilter(filter);
+		
+		int returnVal = jfc.showSaveDialog(null);
+		if(returnVal == 0) {
+			File file = jfc.getSelectedFile();
+			
+			String str = ArrangeList();
+			System.out.print("저장할게요오옷");
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+				bw.write(str);
+				bw.flush();
+				bw.close();
+			}catch(Exception e) { 
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+	public void OpenFile() throws IOException {
+		JFileChooser jfc = new JFileChooser();
+		
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "text");
+		jfc.setFileFilter(filter);
+		
+		String contents = "";
+		
+		int returnVal = jfc.showSaveDialog(null);
+		if(returnVal == 0) {
+			File file = jfc.getSelectedFile();
+			contents = readFile(file.getPath(), Charset.defaultCharset());
+			//System.out.println(contents);
+		}
+		
+		String name, major, number, gender;
+		int start, index = 0;
+		start = 0;
+		
+		while( contents.length() - 2 > index)
+		{
+			index = contents.indexOf(", ",start);
+			name = contents.substring(start, index);
+			start = index + 2;
+			
+			index = contents.indexOf(", ", start);
+			major = contents.substring(start,  index);
+			start = index + 2;
+			
+			index = contents.indexOf(", ", start);
+			number = contents.substring(start,  index);
+			start = index + 2;
+			
+			index = contents.indexOf(", ", start);
+			gender = contents.substring(start,  index);
+			start = index + 2;
+			
+			Student stTemp = new Student(name, major, number, gender);
+			
+			index = contents.indexOf(", ", start);
+			stTemp.midtermExamScore = Integer.parseInt(contents.substring(start,  index));
+			start = index + 2;
+			
+			index = contents.indexOf(", ", start);
+			stTemp.finalExamScore = Integer.parseInt(contents.substring(start,  index));
+			start = index + 2;
+			
+			index = contents.indexOf(", ", start);
+			stTemp.quizScore = Integer.parseInt(contents.substring(start,  index));
+			start = index + 2;
+			
+			index = contents.indexOf(", ", start);
+			stTemp.reportScore = Integer.parseInt(contents.substring(start,  index));
+			start = index + 2;
+			
+			index = contents.indexOf(", ", start);
+			stTemp.etcScore = Integer.parseInt(contents.substring(start,  index));
+			start = index + 2;
+			
+			index = contents.indexOf(", ", start);
+			stTemp.announcementScore = Integer.parseInt(contents.substring(start,  index));
+			start = index + 2;
+			
+			index = contents.indexOf(", ", start);
+			String attend = contents.substring(start,  index);
+			for(int i = 0; i < 16; i++)
+				if(attend.substring(i, i+1).equals("a"))
+					stTemp.attendance[i] = 1;
+				else if(attend.substring(i, i+1).equals("b"))
+					stTemp.attendance[i] = 2;
+				else if(attend.substring(i, i+1).equals("c"))
+					stTemp.attendance[i] = 3;
+			start = index + 2;
+			
+			index = contents.indexOf(", ", start);
+			stTemp.totalScore = Integer.parseInt(contents.substring(start,  index));
+			start = index + 2;
+			
+			index = contents.indexOf("\r\n", start);
+			stTemp.grade = contents.substring(start,  index);
+			start = index + 2;
+			//System.out.println(stTemp.toString());
+			
+			StudentPanel tempStudentPanel = new StudentPanel(stTemp);
+			tempStudentPanel.manage = this;
+			
+			infoList.addStudentPanel(tempStudentPanel);
+			this.stList.add(tempStudentPanel);
+			
+		}
+		
+		
+	}
+
+	public void OpenBySql() throws SQLException {
+		DBCaller temp = new DBCaller();
+		
+		String sql = "SELECT * FROM student";
+		PreparedStatement pstmt = temp.con.prepareStatement(sql);
+		ResultSet rs = pstmt.executeQuery();
+		
+		while(rs.next()) {
+			Student stTemp = new Student(rs.getString(1),rs.getString("major"), rs.getString("number"), rs.getString("gender"));
+			
+			stTemp.totalScore = rs.getInt("totalScore");
+			stTemp.midtermExamScore = rs.getInt("midtermScore");
+			stTemp.finalExamScore = rs.getInt("finalScore");
+			stTemp.quizScore = rs.getInt("quizScore");
+			stTemp.etcScore = rs.getInt("etcScore");
+			stTemp.reportScore = rs.getInt("reportScore");
+			stTemp.announcementScore = rs.getInt("announceScore");
+			
+			String checkout = rs.getString("checkOut");
+			
+			for(int i = 0; i < 16; i++)
+				if(checkout.charAt(i) == 'a') {
+					stTemp.attendance[i] = 1;
+				}else if(checkout.charAt(i) == 'b') {
+					stTemp.attendance[i] = 2;
+				}else if(checkout.charAt(i) == 'c') {
+					stTemp.attendance[i] = 3;
+				}
+			
+			stTemp.grade = rs.getString("grade");
+			stTemp.manage = this;
+			//System.out.println(stTemp.toString());
+			
+			StudentPanel tempStudentPanel = new StudentPanel(stTemp);
+			tempStudentPanel.manage = this;
+			
+			infoList.addStudentPanel(tempStudentPanel);
+			this.stList.add(tempStudentPanel);
+			
+			
+			//System.out.print("name: " + rs.getString(1) + ", ");
+			//System.out.println("number: " + rs.getString("number"));
+		}
+		
+		temp.con.close();
+		temp.stmt.close();
+	}
+	
+	public void SaveBySql() throws SQLException {
+		DBCaller temp = new DBCaller();
+		
+		
+		String sql = "INSERT INTO student (name, major, number, gender, totalScore, midtermScore, finalScore, quizScore, etcScore, announceScore, reportScore, checkOut, grade)" ;
+		sql += "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		
+		PreparedStatement pstmt;
+		
+		pstmt = temp.con.prepareStatement("TRUNCATE TABLE student");
+		
+		pstmt.executeUpdate();
+		pstmt.close();
+		
+		
+		for(int i = 0; i < stList.size(); i++) {
+			pstmt = temp.con.prepareStatement(sql);
+			
+			pstmt.setString(1, stList.get(i).info.name);
+			pstmt.setString(2, stList.get(i).info.major);
+			pstmt.setString(3, stList.get(i).info.number);
+			pstmt.setString(4, stList.get(i).info.gender);
+			
+			pstmt.setInt(5, stList.get(i).info.totalScore);
+			pstmt.setInt(6, stList.get(i).info.midtermExamScore);
+			pstmt.setInt(7, stList.get(i).info.finalExamScore);
+			pstmt.setInt(8, stList.get(i).info.quizScore);
+			pstmt.setInt(9, stList.get(i).info.etcScore);
+			pstmt.setInt(10, stList.get(i).info.announcementScore);
+			pstmt.setInt(11, stList.get(i).info.reportScore);
+			
+			pstmt.setString(12, stList.get(i).info.CheckoutToString());
+			pstmt.setString(13, stList.get(i).info.grade);
+			
+			pstmt.execute();
+			pstmt.close();
+		}
+		
+		//sql.append("INSERT INTO student (name, major, number, gender, totalScore, midtermScore, finalScore, quizScore, etcScore, announceScore, reportScore, checkOut, grade)");
+		//sql.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		
+		
+		temp.con.close();
+		temp.stmt.close();
+	}
+	private String readFile(String path, Charset encoding) throws IOException {
+		byte[] encoded = Files.readAllBytes(Paths.get(path));
+		  return new String(encoded, encoding);
+	}
+
+	public String ArrangeList() {
+		this.CalculateTotalScore();
+		
+		String result = "";
+		
+		for(int i = 0; i < stList.size(); i++)
+		{
+			result += stList.get(i).info.name + ", ";
+			result += stList.get(i).info.number + ", ";
+			result += stList.get(i).info.major + ", ";
+			result += stList.get(i).info.gender + ", ";
+			
+			result += stList.get(i).info.midtermExamScore + ", ";
+			result += stList.get(i).info.finalExamScore + ", ";
+			result += stList.get(i).info.quizScore + ", ";
+			result += stList.get(i).info.reportScore + ", ";
+			result += stList.get(i).info.etcScore + ", ";
+			result += stList.get(i).info.announcementScore + ", ";
+			
+			for(int j = 0; j < 16; j++){
+				if(stList.get(i).info.attendance[j] == 1) {
+					result += 'a';
+				}else if (stList.get(i).info.attendance[j] == 2) {
+					result += 'b';
+				}else if( stList.get(i).info.attendance[j] == 3) {
+					result += 'c';
+				}
+			}
+			result += ", ";
+			
+			result += stList.get(i).info.totalScore + ", ";
+			result += stList.get(i).info.grade;
+			
+			result += "\r\n";
+		}
+
+		return result;
+	}
+	
 	public ProgramManager(){
 		
 	}
+	
+	
 	
 	public boolean IsOverLap() {
 		// 중복되는 이가 있는가
@@ -91,6 +366,7 @@ public class ProgramManager {
 		return true;
 	}
 
+	
 	public void InsertStudent() {
 		String gender = "";
 		if(insertInfo.getMale().isSelected())
@@ -111,6 +387,7 @@ public class ProgramManager {
 		temp.setQuizScore(Integer.parseInt(insertInfo.getQuizJTextText().getText()));
 		temp.setReportScore(Integer.parseInt(insertInfo.getReportText().getText()));
 		temp.setEtcScore(Integer.parseInt(insertInfo.getEtcText().getText()));
+		temp.manage = this;
 		
 		StudentPanel tempStudentPanel = new StudentPanel(temp);
 		tempStudentPanel.manage = this;
@@ -149,7 +426,7 @@ public class ProgramManager {
 				stList.get(i).info = result;
 				stList.get(i).SettingButton();
 				infoList.listPane.validate();
-				System.out.println("이 목록을 수정합니다");
+				//System.out.println("이 목록을 수정합니다");
 				break;
 			}
 		}
@@ -287,8 +564,8 @@ public class ProgramManager {
 			return false;
 		}
 		
-		if( (ap + a0 + bp + b0 + cp + c0 + d + f) > 100) {
-			JOptionPane.showMessageDialog(null, "비율들의 도합이 100이 넘어갑니다", "오류", JOptionPane.WARNING_MESSAGE);
+		if( (ap + a0 + bp + b0 + cp + c0 + d + f) != 100) {
+			JOptionPane.showMessageDialog(null, "비율들의 도합이 100되지 않습니다.", "오류", JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
 			
@@ -343,6 +620,8 @@ public class ProgramManager {
 		ScoreRatio.announce = announce;
 		ScoreRatio.etc = etc;
 		
+		this.CalculateTotalScore();
+		
 		return true;
 	}
 	
@@ -377,18 +656,248 @@ public class ProgramManager {
 			
 			stList.get(i).info.totalScore = total;
 		}
-		
-		for(int i = 0; i < stList.size(); i++)
-		{
-			System.out.println(stList.get(i).info.totalScore);
-		}
 	}
 	
 	public void DrawGraph(JPanel graphPanel, int type) {
+
+		class GraphPanel extends BasePanel {
+			protected void paintComponent (Graphics g) {
+				int[] data = {0, 0, 0, 0, 0};
+				int[] ratio = {0, 0, 0, 0, 0};
 		
-		graphPanel.add(new GraphPanel(), BorderLayout.CENTER);
+				
+				super.paintComponent(g);
+				
+				final int centerX = 100;
+				final int centerY = 80;
+				
+				g.setColor(new Color(0,200,250));
+				g.drawLine(0, 0,0, 400);
+				
+				data = ProgramManager.this.GetGraphData(type);
+				ratio = CalcurateRatio(data);
+				
+				//System.out.println(ratio.toString());
+				
+				//g.setColor(Color.RED);
+				//g.fillArc(centerX, centerY, 250, 250, 0, 30 );
+				
+				
+				g.setColor(Color.RED);
+				g.fillArc(centerX, centerY, 250, 250, 0, ratio[0] );
+				
+				g.setColor(Color.blue);
+				g.fillArc(centerX, centerY, 250, 250, ratio[0]+1, ratio[1]);
+				
+				g.setColor(Color.yellow);
+				g.fillArc(centerX, centerY, 250, 250, ratio[0]+ratio[1]+1, ratio[2]);
+				
+				g.setColor(Color.magenta);
+				g.fillArc(centerX, centerY, 250, 250, ratio[0]+ratio[1]+ratio[2]+1, ratio[3]);
+				
+				g.setColor(Color.green);
+				g.fillArc(centerX, centerY, 250, 250, ratio[0]+ratio[1]+ratio[2]+ratio[3]+1, ratio[4]);
 		
+				
+			}
+		}
+		GraphPanel graph = new GraphPanel();
 		
+		graphPanel.add(graph, BorderLayout.CENTER);
+		
+	}
+	
+	public int[] GetGraphData(int type) {
+		this.CalculateTotalScore();
+		int[] data = {0, 0, 0, 0, 0};
+		for(int i = 0; i < stList.size(); i++) {
+			switch(type) {
+			case 1:
+				if(stList.get(i).info.totalScore > 8000 )
+					data[4]++;
+				else if(stList.get(i).info.totalScore > 6000) 
+					data[3]++;
+				else if(stList.get(i).info.totalScore > 4000) 
+					data[2]++;
+				else if(stList.get(i).info.totalScore > 2000) 
+					data[1]++;
+				else 
+					data[0]++;
+				break;
+			case 2:
+				if(stList.get(i).info.midtermExamScore > 80 )
+					data[4]++;
+				else if(stList.get(i).info.midtermExamScore > 60) 
+					data[3]++;
+				else if(stList.get(i).info.midtermExamScore > 40) 
+					data[2]++;
+				else if(stList.get(i).info.midtermExamScore > 20) 
+					data[1]++;
+				else 
+					data[0]++;
+				
+				break;
+			case 3:
+				if(stList.get(i).info.finalExamScore > 80 )
+					data[4]++;
+				else if(stList.get(i).info.finalExamScore > 60) 
+					data[3]++;
+				else if(stList.get(i).info.finalExamScore > 40) 
+					data[2]++;
+				else if(stList.get(i).info.finalExamScore > 20) 
+					data[1]++;
+				else 
+					data[0]++;
+				break;
+			case 4:
+				if(stList.get(i).info.quizScore > 80 )
+					data[4]++;
+				else if(stList.get(i).info.quizScore > 60) 
+					data[3]++;
+				else if(stList.get(i).info.quizScore > 40) 
+					data[2]++;
+				else if(stList.get(i).info.quizScore > 20) 
+					data[1]++;
+				else 
+					data[0]++;
+				break;
+			case 5:
+				if(stList.get(i).info.reportScore > 80 )
+					data[4]++;
+				else if(stList.get(i).info.reportScore > 60) 
+					data[3]++;
+				else if(stList.get(i).info.reportScore > 40) 
+					data[2]++;
+				else if(stList.get(i).info.reportScore > 20) 
+					data[1]++;
+				else 
+					data[0]++;
+				break;
+			case 6:
+				if(this.CalculateAttendanceScore(stList.get(i).info.attendance) > 80 )
+					data[4]++;
+				else if(this.CalculateAttendanceScore(stList.get(i).info.attendance) > 60) 
+					data[3]++;
+				else if(this.CalculateAttendanceScore(stList.get(i).info.attendance) > 40) 
+					data[2]++;
+				else if(this.CalculateAttendanceScore(stList.get(i).info.attendance) > 20) 
+					data[1]++;
+				else 
+					data[0]++;				
+				break;
+			case 7:
+				if(stList.get(i).info.etcScore > 80 )
+					data[4]++;
+				else if(stList.get(i).info.etcScore > 60) 
+					data[3]++;
+				else if(stList.get(i).info.etcScore > 40) 
+					data[2]++;
+				else if(stList.get(i).info.etcScore > 20) 
+					data[1]++;
+				else 
+					data[0]++;
+				break;
+			}
+		}
+		
+		return data;
+	}
+	public int[] CalcurateRatio(int[] data) {
+		int[] ratio = {0, 0, 0, 0, 0};
+		int total = 0;
+		
+		for(int i =0 ; i< 5; i++)
+			total += data[i];
+		
+		for(int j = 0; j < 5; j++) {
+			ratio[j] = (int)( data[j] / (double)total * 360);
+		}
+		
+		return ratio;
+	}
+	
+	public double CalculateAver() {
+		double result = 0;
+		
+		for(int i = 0; i < stList.size(); i++)
+			result += stList.get(i).info.totalScore;
+		
+		return result / stList.size();
+	}
+	
+	public int GetMany() {
+		return stList.size();
+	}
+	
+	public double GetVar() {
+		double result = 0;
+		
+		int[] data = new int[stList.size()];
+		for(int i = 0; i < data.length; i++)
+			data[i] = stList.get(i).info.totalScore;
+		
+		for(int j = 0; j < data.length; j++)
+			result += (data[j] - CalculateAver()) *(data[j] - CalculateAver());
+		
+		if(stList.size() != 0)
+			result /= (stList.size());
+		
+		return result;
+	}
+	
+	public double GetStdev() {
+		return (Math.sqrt(GetVar()));
+	}
+	
+	public void SetResultPanel(JPanel pane) {
+		for(int i = 0; i < stList.size(); i++) {
+			pane.add(new ResultPanel(stList.get(i).info));
+		}
+		pane.setPreferredSize(new Dimension(560, 60 * stList.size()));
+	}
+	
+	public boolean IsValidGrade(int sel) {
+		int[] data = {0, 0, 0, 0, 0, 0, 0, 0};
+		int[] ratio = {0, 0, 0, 0, 0, 0, 0, 0};
+		int ratioSum = 0;
+		double dataSum = 0.0f;
+		
+		ratio[0] = GradeRatio.aP;
+		ratio[1] = GradeRatio.aZ;
+		
+		ratio[2] = GradeRatio.bP;
+		ratio[3] = GradeRatio.bZ;
+		
+		ratio[4] = GradeRatio.cP;
+		ratio[5] = GradeRatio.cZ;
+		
+		ratio[6] = GradeRatio.d;
+		ratio[7] = GradeRatio.f;
+		
+		for(int i = 0; i < stList.size(); i++) {
+			if(stList.get(i).info.gradeCombo.getSelectedIndex() != 0) {
+				data[stList.get(i).info.gradeCombo.getSelectedIndex() - 1]++;
+			}
+		}
+		/*
+		for(int i = 0; i < data.length; i++){
+			System.out.print(data[i] + " ");
+		}
+		System.out.println("");
+		*/
+		
+		for(int j = 0; j < sel; j++)
+			ratioSum += ratio[j];
+		
+		for(int k = 0; k < sel; k++)
+			dataSum += data[k];
+		
+		dataSum = dataSum / stList.size() * 100;
+		
+		if( (int)dataSum > ratioSum)
+			return false;
+		
+		return true;
 	}
 	
 	// 등급 최대 비율
@@ -397,8 +906,8 @@ public class ProgramManager {
 		static int aZ = 15;
 		static int bP = 30;
 		static int bZ = 10;
-		static int cP;
-		static int cZ;
+		static int cP = 10;
+		static int cZ = 20;;
 		static int d;
 		static int f;
 	}
@@ -413,5 +922,4 @@ public class ProgramManager {
 		static int announce = 5;
 		static int etc = 5;
 	}
-	
 }
